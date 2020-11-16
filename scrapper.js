@@ -176,6 +176,7 @@ async function watchAnime(episode_id) {
 
         const episode_link = $('li.dowloads > a').attr('href');
         const name = $('div.anime_video_body h1').text();
+        const image = $('head meta[itemprop=image]').attr("content");
 
         const ep = await getDownloadLink(episode_link);
         let arr;
@@ -183,6 +184,7 @@ async function watchAnime(episode_id) {
             arr = {
                 'name': name.replace(" at gogoanime", ""),
                 'anime_link': `${gogoURL}/category/${query.replace(/-episode-[0-9]+/g, "")}`,
+                'img_url': image,
                 'anime_id': query,
                 'episode_link': `${gogoURL}/${query}`,
                 'download_links': ep
