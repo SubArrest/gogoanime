@@ -114,7 +114,6 @@ async function recent() {
         ret = recent_list;
     })
     .catch(err => {
-        console.error(err);
         ret = { 'error': err.message }
     });
 
