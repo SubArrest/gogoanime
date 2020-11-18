@@ -8,6 +8,7 @@ config({
 const gogoURL = process.env.URL || "https://gogoanime.so"
 const episodeRegex = /^.*(?:gogoanime\..+\/)(?!category\/)(.+-episode-[0-9]+).*/
 const animeRegex = /^.*(?:gogoanime\..+\/)(?:category\/)(.+)/
+const recentRegex = /(https\:\/\/gogocdn.net\/cover\/.+\.png)/
 
 function episode_parser(query) {
     const match = query.match(episodeRegex);
@@ -15,6 +16,11 @@ function episode_parser(query) {
 }
 function anime_parser(query) {
     const match = query.match(animeRegex);
+    return match? match[1] : false;
+}
+function recent_parser(query) {
+    if(query === undefined || query === null) return false;
+    const match = query.match(recentRegex);
     return match? match[1] : false;
 }
 
@@ -78,6 +84,37 @@ async function popular(page) {
         ret = anime_list
     })
     .catch(err => {
+        ret = { 'error': err.message }
+    });
+
+    return ret
+}
+
+async function recent() {
+    let ret;
+    let recent_list = [];
+    
+    await axios.get(`${gogoURL}/anime-list.html`)
+    .then(async res => {
+        const body = await res.data;
+        const $ = cheerio.load(body);
+
+        $('div.recent div.viewport li').each((index, element) => {
+            const img_url = recent_parser($(element).find('a div.thumbnail-recent').attr('style'));
+            if(img_url){
+                const name = $(element).find('a').attr('title');
+                const episode_link = `${gogoURL}${$(element).find('a').attr('href')}`;
+                recent_list.push({
+                    'img_url': img_url,
+                    'name': name,
+                    'episode_link': episode_link
+                });
+            }
+        });
+        ret = recent_list;
+    })
+    .catch(err => {
+        console.error(err);
         ret = { 'error': err.message }
     });
 
@@ -237,6 +274,7 @@ async function getDownloadLink(episode_link) {
 module.exports = {
     popular,
     newSeason,
+    recent,
     search,
     anime,
     watchAnime
