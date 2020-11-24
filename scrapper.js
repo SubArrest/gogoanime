@@ -142,8 +142,8 @@ async function search(query) {
             }
             anime_list.push(anime_name);
         });
-
-        ret = anime_list
+        if(anime_list.length > 0) ret = anime_list
+        else ret = { 'error': 'No search results found'}
     })
     .catch(err => {
         ret = { 'error': err.message }
