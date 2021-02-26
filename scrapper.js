@@ -5,7 +5,7 @@ config({
 	path: "/root/apis/gogoanime/.env"
 });
 
-const gogoURL = process.env.URL || "https://gogoanime.so"
+const gogoURL = process.env.URL || "https://www2.gogoanime.sh"
 const episodeRegex = /^.*(?:gogoanime\..+\/)(?!category\/)(.+-episode-[0-9]+).*/
 const animeRegex = /^.*(?:gogoanime\..+\/)(?:category\/)(.+)/
 const recentRegex = /(https\:\/\/gogocdn.net\/cover\/.+\.png)/
